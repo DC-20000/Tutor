@@ -35,5 +35,16 @@ def test_page():
 
     return render_template('test_page.html', subject=subject, grade=grade, question_type=question_type, difficulty=difficulty, num_questions=num_questions, topics_of_interest=topics_of_interest)
 
+@app.route('/result', methods=['GET'])
+def result():
+    subject = request.args.get('subject')
+    grade = request.args.get('grade')
+    question_type = request.args.get('question_type')
+    difficulty = request.args.get('difficulty')
+    num_questions = request.args.get('num_questions')
+    topics_of_interest = request.args.get('topics_of_interest')
+
+    return render_template('result.html', subject=subject, grade=grade, question_type=question_type, difficulty=difficulty, num_questions=num_questions, topics_of_interest=topics_of_interest)
+
 if __name__ == '__main__':
     app.run(debug=True)
