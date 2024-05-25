@@ -94,7 +94,7 @@ button[type="submit"]:hover {
     cursor: pointer;
 }
 
-/* Styles for test_page.html */
+/* Styles for test_page.html
 #test-page {
     display: flex;
     flex-direction: column;
@@ -135,4 +135,4 @@ button[type="submit"]:hover {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     flex-grow: 1;
-}
+} */

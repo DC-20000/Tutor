@@ -1,48 +1,96 @@
 {% extends "base.html" %}
 
-<!-- 
+{% block title %}Test Page{% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='test_page.css') }}">
+<style>
+    #test-page {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    #test-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #333;
+        color: #fff;
+        padding: 20px;
+    }
+
+    #test-header h1 {
+        font-family: 'Kingred Modern', sans-serif;
+        margin: 0;
+    }
+
+    #timer {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    #details {
+        margin: 20px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #questions-display {
+        margin: 20px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        flex-grow: 1;
+    }
+
+    button[type="submit"] {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+</style>
 {% endblock %}
-
-{% block scripts %}
-<script src="{{ url_for('static', filename='test_page.js') }}"></script>
-{% endblock %} -->
-
-
-{% block title %}Test Page{% endblock %}
 
 {% block body_attrs %}id="test-page"{% endblock %}
 
 {% block content %}
-    <div id="test_header">
-        <h1>TEST WINDOW</h1>
-        <div id="timer"></div>
-    </div>
-    <div id="details">
-        <p>Subject: {{ subject }}</p>
-        <p>Grade: {{ grade }}</p>
-        <p>Question Type: {{ question_type }}</p>
-        <p>Difficulty: {{ difficulty }}</p>
-        <p>Number of Questions: {{ num_questions }}</p>
-        <p>Topics of Interest: {{ topics_of_interest }}</p>
-    </div>
+<div id="test-header">
+    <h1>TEST PAGE</h1>
+    <div id="timer"></div>
+</div>
+<div id="details">
+    <p>Subject: {{ subject }}</p>
+    <p>Grade: {{ grade }}</p>
+    <p>Question Type: {{ question_type }}</p>
+    <p>Difficulty: {{ difficulty }}</p>
+    <p>Number of Questions: {{ num_questions }}</p>
+    <p>Topics of Interest: {{ topics_of_interest }}</p>
+</div>
+<div id="questions-display">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed auctor, enim non ultrices bibendum, eros magna bibendum nisl, vel fringilla massa ex at magna.</p>
+</div>
+<button type="submit">Submit</button>
+{% endblock %}
 
-    <div id="questions_display">
-        <p>Questions will be displayed here after parsing.</p>
-    </div>
+{% block scripts %}
+<script>
+    const testPage = document.getElementById('test-page');
 
-    <button type="submit">Submit</button>
-
-    <!-- Add your test questions and functionality here -->
-
-    <!-- <script>
+    if (testPage) {
         // Calculate the test duration in minutes
-        const numQuestions = "{{ num_questions }}";
-        const testDurationMinutes = parseInt(numQuestions) * 3;
-        // const testDurationMinutes = .1
-        
+        const numQuestionsElement = document.querySelector('#details p:nth-child(5)');
+        const numQuestions = numQuestionsElement ? numQuestionsElement.textContent.split(': ')[1] : '{{ num_questions }}';
+        const testDurationMinutes = parseInt(numQuestions) * 2;
+
         // Start the timer
         startTimer(testDurationMinutes);
 
@@ -55,7 +103,7 @@
                 let seconds = timer % 60;
                 seconds = seconds < 10 ? '0' + seconds : seconds;
 
-                timerElement.textContent = `Time Remaining: ${minutes}:${seconds}`;
+                timerElement.textContent = `${minutes}:${seconds}`;
 
                 if (--timer < 0) {
                     clearInterval(timerInterval);
@@ -70,5 +118,6 @@
             // Create a popup or perform any other actions when the time is up
             alert('Time is up! The test has ended.');
         }
-    </script> -->
+    }
+</script>
 {% endblock %}
