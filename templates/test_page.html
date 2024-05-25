@@ -46,7 +46,7 @@
         flex-grow: 1;
     }
 
-    button[type="submit"] {
+    button[type="button"] {
         display: block;
         margin: 20px auto;
         padding: 10px 20px;
@@ -78,7 +78,7 @@
 <div id="questions-display">
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed auctor, enim non ultrices bibendum, eros magna bibendum nisl, vel fringilla massa ex at magna.</p>
 </div>
-<button type="submit">Submit</button>
+<button type="button" id="submitButton">Submit</button>
 {% endblock %}
 
 {% block scripts %}
@@ -108,16 +108,27 @@
                 if (--timer < 0) {
                     clearInterval(timerInterval);
                     timerElement.textContent = 'Time is up!';
-                    // Show the popup or perform any other actions when the time is up
-                    showTimesUpPopup();
+                    // Redirect to the result page
+                    redirectToResultPage();
                 }
             }, 1000);
         }
 
-        function showTimesUpPopup() {
-            // Create a popup or perform any other actions when the time is up
-            alert('Time is up! The test has ended.');
+        function redirectToResultPage() {
+            const subject = '{{ subject }}';
+            const grade = '{{ grade }}';
+            const questionType = '{{ question_type }}';
+            const difficulty = '{{ difficulty }}';
+            const numQuestions = '{{ num_questions }}';
+            const topicsOfInterest = '{{ topics_of_interest }}';
+
+            const resultPageUrl = `/result?subject=${subject}&grade=${grade}&question_type=${questionType}&difficulty=${difficulty}&num_questions=${numQuestions}&topics_of_interest=${topicsOfInterest}`;
+            window.location.href = resultPageUrl;
         }
+
+        // Add click event listener to the submit button
+        const submitButton = document.getElementById('submitButton');
+        submitButton.addEventListener('click', redirectToResultPage);
     }
 </script>
 {% endblock %}
