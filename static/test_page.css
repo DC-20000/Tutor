@@ -1,0 +1,13 @@
+/* TEST PAGE STYLES HERE */
+
+.test_header {
+    font-family: fantasy;
+    font-size: 500px;
+    margin-top: 50px;
+    margin-left: 50px;
+
+}
+
+.details {
+    font-size: 50px;
+}

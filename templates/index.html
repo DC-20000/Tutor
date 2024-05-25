@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block body_id %}id="index-page"{% endblock %}
+
+{% block title %}QuizAI - AI Quiz Generator{% endblock %}
+
+{% block content %}
+<!-- <div class="header">
+    
+</div> -->
+<div class="form-container">
+    <h1>QuizAI</h1>
+    <p>AI QUIZ GENERATOR</p>
+    <form method="post" action="{{ url_for('index') }}">
+        <div class="form-group">
+            <p>Choose Subject</p>
+            <select id="chooseSubject" name="chooseSubject"></select>
+        </div>
+        <div class="form-group">
+            <p>Grade</p>
+            <select id="grade" name="grade"></select>
+        </div>
+        <div class="form-group">
+            <p>Type of Questions</p>
+            <select id="typeOfQuestions" name="typeOfQuestions"></select>
+        </div>
+        <div class="form-group">
+            <p>Difficulty</p>
+            <select id="difficulty" name="difficulty"></select>
+        </div>
+        <div class="form-group">
+            <p>No. of Questions</p>
+            <select id="numQuestions" name="numQuestions"></select>
+        </div>
+        <div class="form-group">
+            <p>Topics of interest</p>
+            <input type="text" id="topicsOfInterest" name="topicsOfInterest" placeholder="Topics of interest">
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<!-- Rules and Regulations Popup -->
+<div id="rulesPopup" class="popup">
+    <div class="popup-content">
+        <span class="close-button">&times;</span>
+        <h2>Rules and Regulations</h2>
+        <p>1. Do not cheat or use any external resources during the test.</p>
+        <p>2. Once the test starts, you cannot exit until the time is up.</p>
+        <p>3. Your answers will be automatically submitted when the time runs out.</p>
+        <!-- Add more rules and regulations here -->
+        <button id="startTestButton">Start Test</button>
+    </div>
+</div>
+{% endblock %}

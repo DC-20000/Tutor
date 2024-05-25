@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+<!-- 
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='test_page.css') }}">
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='test_page.js') }}"></script>
+{% endblock %} -->
+
+
+{% block title %}Test Page{% endblock %}
+
+{% block body_attrs %}id="test-page"{% endblock %}
+
+{% block content %}
+    <div id="test_header">
+        <h1>TEST WINDOW</h1>
+        <div id="timer"></div>
+    </div>
+    <div id="details">
+        <p>Subject: {{ subject }}</p>
+        <p>Grade: {{ grade }}</p>
+        <p>Question Type: {{ question_type }}</p>
+        <p>Difficulty: {{ difficulty }}</p>
+        <p>Number of Questions: {{ num_questions }}</p>
+        <p>Topics of Interest: {{ topics_of_interest }}</p>
+    </div>
+
+    <div id="questions_display">
+        <p>Questions will be displayed here after parsing.</p>
+    </div>
+
+    <button type="submit">Submit</button>
+
+    <!-- Add your test questions and functionality here -->
+
+    <!-- <script>
+        // Calculate the test duration in minutes
+        const numQuestions = "{{ num_questions }}";
+        const testDurationMinutes = parseInt(numQuestions) * 3;
+        // const testDurationMinutes = .1
+        
+        // Start the timer
+        startTimer(testDurationMinutes);
+
+        function startTimer(duration) {
+            let timer = duration * 60;
+            const timerElement = document.getElementById('timer');
+
+            const timerInterval = setInterval(function() {
+                const minutes = Math.floor(timer / 60);
+                let seconds = timer % 60;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+
+                timerElement.textContent = `Time Remaining: ${minutes}:${seconds}`;
+
+                if (--timer < 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = 'Time is up!';
+                    // Show the popup or perform any other actions when the time is up
+                    showTimesUpPopup();
+                }
+            }, 1000);
+        }
+
+        function showTimesUpPopup() {
+            // Create a popup or perform any other actions when the time is up
+            alert('Time is up! The test has ended.');
+        }
+    </script> -->
+{% endblock %}
