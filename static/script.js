@@ -37,11 +37,45 @@ const startTestButton = document.getElementById('startTestButton');
 const form = document.querySelector('form');
 
 // Open the popup when the form is submitted
+
+function validateForm() {
+    const chooseSubject = document.getElementById('chooseSubject').value;
+    const grade = document.getElementById('grade').value;
+    const typeOfQuestions = document.getElementById('typeOfQuestions').value;
+    const difficulty = document.getElementById('difficulty').value;
+
+    if (chooseSubject === 'Please Select' || grade === 'Please Select' || typeOfQuestions === 'Please Select' || difficulty === 'Please Select') {
+        showErrorPopup();
+        return false; // Prevent form submission
+    }
+
+    return true; // Allow form submission
+}
+
 form.addEventListener('submit', function(event) {
+    
     event.preventDefault(); // Prevent the default form submission
-    rulesPopup.style.display = 'block';
+    if (validateForm()) {
+        // if all fields are filled then show the rulesPopup.
+        rulesPopup.style.display = 'block';
+    }
 });
 
+function showErrorPopup() {
+    const errorPopup = document.getElementById('errorPopup');
+    errorPopup.style.display = 'block';
+
+    const closeButton = errorPopup.querySelector('.close-button');
+    closeButton.addEventListener('click', () => {
+        errorPopup.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === errorPopup) {
+            errorPopup.style.display = 'none';
+        }
+    });
+}
 // Close the popup when the close button is clicked
 closeButton.addEventListener('click', function() {
     rulesPopup.style.display = 'none';

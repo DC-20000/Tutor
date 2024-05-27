@@ -1,22 +1,28 @@
+
 {% extends "base.html" %}
 
 {% block title %}Test Page{% endblock %}
 
 {% block head %}
 <style>
+    body{
+        margin:0;
+    }
     #test-page {
+        background-color: #FFFFDD;
         display: flex;
         flex-direction: column;
         min-height: 100vh;
+        font-family: 'DM Sans', sans-serif;
     }
 
     #test-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background-color: #333;
+        background-color: #FFBD59;
         color: #fff;
-        padding: 20px;
+        padding: 20px 20px 0px 20px;
     }
 
     #test-header h1 {
@@ -24,12 +30,21 @@
         margin: 0;
     }
 
+    #timer-container{
+        display:flex;
+        align-items:center;
+        margin-left:auto;
+        margin right:20px;
+    }
+
     #timer {
-        font-size: 1.2rem;
+        font-size:2rem;
         font-weight: bold;
     }
 
     #details {
+        display: flex;
+        justify-content: space-between;
         margin: 20px;
         padding: 20px;
         background-color: #fff;
@@ -38,7 +53,7 @@
     }
 
     #questions-display {
-        margin: 20px;
+        margin: 0px 20px;
         padding: 20px;
         background-color: #fff;
         border-radius: 5px;
@@ -46,11 +61,57 @@
         flex-grow: 1;
     }
 
+    #main-content{
+        display:flex;
+    }
+
+    #questions-panel {
+        width: 200px;
+        background-color: #FFFFA7;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .question-box {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .question-box:hover {
+        background-color: #e0e0e0;
+    }
+
+    .question-box.active {
+        background-color: #FFBD59;
+        color: #fff;
+    }
+
+    .option {
+        background-color: ##FFFFA7;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .option.selected {
+        background-color: #FFBD59;
+        color: #fff;
+    }
+
     button[type="button"] {
         display: block;
-        margin: 20px auto;
+        margin:20px 20px 20px auto;
         padding: 10px 20px;
-        background-color: #4CAF50;
+        background-color: #FFBD59;
         color: #fff;
         border: none;
         border-radius: 4px;
@@ -65,7 +126,13 @@
 {% block content %}
 <div id="test-header">
     <h1>TEST PAGE</h1>
-    <div id="timer"></div>
+    <div id="timer-container">
+        <button type="button" id="pauseButton" onclick="pauseTimer()"><i class="fa fa-pause" style="font-size:40px;color:white"></i></button>
+        <div id="timer"></div>
+    </div>
+    <div id="profile-picture">
+        <!-- Add profile picture here -->
+    </div>
 </div>
 <div id="details">
     <p>Subject: {{ subject }}</p>
@@ -75,10 +142,18 @@
     <p>Number of Questions: {{ num_questions }}</p>
     <p>Topics of Interest: {{ topics_of_interest }}</p>
 </div>
-<div id="questions-display">
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed auctor, enim non ultrices bibendum, eros magna bibendum nisl, vel fringilla massa ex at magna.</p>
+<div id="main-content">
+    <div id="questions-panel">
+       
+    </div>
+    <div id="questions-display">
+        <p id="question-text"></p>
+        <div id="options">
+           
+        </div>
+    </div>
 </div>
-<button type="button" id="submitButton">Submit</button>
+<button type="button" id="submitButton" onclick="submitAnswers()">Submit</button>
 {% endblock %}
 
 {% block scripts %}
@@ -91,7 +166,112 @@
         const numQuestions = numQuestionsElement ? numQuestionsElement.textContent.split(': ')[1] : '{{ num_questions }}';
         const testDurationMinutes = parseInt(numQuestions) * 2;
 
-        // Start the timer
+        // Initialize variables
+        let timer;
+        let timerInterval;
+        let currentQuestionIndex = 0;
+        let questions = [];
+        let selectedOptions = [];
+
+        // Fetch questions 
+        fetchQuestions();
+
+        function fetchQuestions() {
+            questions = [
+                {
+                    question: 'Q1. Lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum',
+                    options: ['A. Option 1', 'B. Option 2', 'C. Option 3', 'D. Option 4']
+                },
+                {
+                    question: 'Q2. Lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum',
+                    options: ['A. Option 1', 'B. Option 2', 'C. Option 3', 'D. Option 4']
+                },
+                // Add more questions here
+            ];
+
+            renderQuestions();
+            renderQuestion(currentQuestionIndex);
+        }
+
+        function renderQuestions() {
+            const questionsPanel = document.getElementById('questions-panel');
+            questionsPanel.innerHTML = '';
+
+            for (let i = 0; i < questions.length; i++) {
+                const questionBox = document.createElement('div');
+                questionBox.classList.add('question-box');
+                questionBox.textContent = `Q${i + 1}`;
+                questionBox.addEventListener('click', () => {
+                    renderQuestion(i);
+                    currentQuestionIndex = i;
+                    updateQuestionBoxStyles();
+                });
+                questionsPanel.appendChild(questionBox);
+            }
+        }
+
+        function renderQuestion(index) {
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options');
+
+            const question = questions[index];
+            questionText.textContent = question.question;
+
+            optionsContainer.innerHTML = '';
+            for (let i = 0; i < question.options.length; i++) {
+                const option = document.createElement('div');
+                option.classList.add('option');
+                option.textContent = question.options[i];
+                option.addEventListener('click', () => {
+                    selectOption(index, i);
+                });
+                optionsContainer.appendChild(option);
+            }
+
+            updateQuestionBoxStyles();
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            const options = document.querySelectorAll('#options .option');
+            options.forEach((option, index) => {
+                option.classList.remove('selected');
+                if (index === optionIndex) {
+                    option.classList.add('selected');
+                    selectedOptions[questionIndex] = optionIndex;
+                }
+            });
+        }
+
+        function updateQuestionBoxStyles() {
+            const questionBoxes = document.querySelectorAll('#questions-panel .question-box');
+            questionBoxes.forEach((box, index) => {
+                box.classList.remove('active');
+                if (index === currentQuestionIndex) {
+                    box.classList.add('active');
+                }
+            });
+        }
+
+        function submitAnswers() {
+            // Disable all options
+            const options = document.querySelectorAll('#options .option');
+            options.forEach(option => option.removeEventListener('click', selectOption));
+
+            // Disable submit button
+            const submitButton = document.getElementById('submitButton');
+            submitButton.disabled = true;
+
+            // Redirect to the result page with the selected options
+            const subject = '{{ subject }}';
+            const grade = '{{ grade }}';
+            const questionType = '{{ question_type }}';
+            const difficulty = '{{ difficulty }}';
+            const numQuestions = '{{ num_questions }}';
+            const topicsOfInterest = '{{ topics_of_interest }}';
+            const resultPageUrl = `/result?subject=${subject}&grade=${grade}&question_type=${questionType}&difficulty=${difficulty}&num_questions=${numQuestions}&topics_of_interest=${topicsOfInterest}&selected_options=${JSON.stringify(selectedOptions)}`;
+            window.location.href = resultPageUrl;
+        }
+
         startTimer(testDurationMinutes);
 
         function startTimer(duration) {
@@ -112,23 +292,24 @@
                     redirectToResultPage();
                 }
             }, 1000);
+
         }
 
-        function redirectToResultPage() {
-            const subject = '{{ subject }}';
-            const grade = '{{ grade }}';
-            const questionType = '{{ question_type }}';
-            const difficulty = '{{ difficulty }}';
-            const numQuestions = '{{ num_questions }}';
-            const topicsOfInterest = '{{ topics_of_interest }}';
+        let isPaused = false;
 
-            const resultPageUrl = `/result?subject=${subject}&grade=${grade}&question_type=${questionType}&difficulty=${difficulty}&num_questions=${numQuestions}&topics_of_interest=${topicsOfInterest}`;
-            window.location.href = resultPageUrl;
+        function pauseTimer(){
+            isPaused = !isPaused;
+            if (isPaused) {
+                clearInterval(timerInterval);
+                pauseButton.textContent = 'Resume';
+            } else {
+                startTimer(timer / 60);
+                pauseButton.textContent = 'Pause';
+            }
         }
+        
 
-        // Add click event listener to the submit button
-        const submitButton = document.getElementById('submitButton');
-        submitButton.addEventListener('click', redirectToResultPage);
+
     }
 </script>
 {% endblock %}
