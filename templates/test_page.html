@@ -66,6 +66,8 @@
     }
 
     #questions-panel {
+        margin-left:20px;
+        height:69%;
         width: 200px;
         background-color: #FFFFA7;
         padding: 20px;
@@ -73,6 +75,19 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
+    .button-container{
+        display:flex;
+        justify-content:space-between;
+    }
+
+    .ques-buttons{
+        display:flex;
+    }
+
+    #submitButton{
+        margin-left:auto;
+        margin-right:auto;
+    }
     .question-box {
         background-color: #fff;
         border: 1px solid #ccc;
@@ -81,6 +96,11 @@
         margin-bottom: 10px;
         cursor: pointer;
         transition: background-color 0.3s ease;
+    }
+
+    .question-box.flagged {
+        background-color: #ffc107; /* Yellow color for flagged questions */
+        color: #fff;
     }
 
     .question-box:hover {
@@ -107,6 +127,16 @@
         color: #fff;
     }
 
+    .option.submitted {
+        background-color: #4CAF50; /* Green color for submitted options */
+        color: #fff;
+    }
+    
+    .question-box.submitted {
+        background-color: #4CAF50; /* Green color for submitted questions */
+        color: #fff;
+    }
+
     button[type="button"] {
         display: block;
         margin:20px 20px 20px auto;
@@ -128,10 +158,11 @@
     <h1>TEST PAGE</h1>
     <div id="timer-container">
         <button type="button" id="pauseButton" onclick="pauseTimer()"><i class="fa fa-pause" style="font-size:40px;color:white"></i></button>
-        <div id="timer"></div>
+        <button type="button" id="resumeButton" onclick="resumeTimer()" style="display: none;"><i class="fa fa-play" style="font-size:40px;color:white"></i></button>
+    <div id="timer"></div>
     </div>
     <div id="profile-picture">
-        <!-- Add profile picture here -->
+        
     </div>
 </div>
 <div id="details">
@@ -143,17 +174,31 @@
     <p>Topics of Interest: {{ topics_of_interest }}</p>
 </div>
 <div id="main-content">
-    <div id="questions-panel">
+    <div style="display:flex-row">
+        <div id="questions-panel">
        
+        </div>
+        <button type="button" id="submitButton" onclick="submitAnswers()">Submit Test</button>
     </div>
-    <div id="questions-display">
-        <p id="question-text"></p>
-        <div id="options">
-           
+    <div id="questions-buttons-container" style="width:100%">
+        <div id="questions-display">
+            <p id="question-text"></p>
+                <div id="options" data-questions="0">
+                
+                
+            </div>
+        </div>
+        <div class="button-container" style="margin-left:20px">
+            <div class="ques-buttons">
+                <button type="button" id="prevQuesButton" onclick="prevQues()"><span style='font-size:18px;'>&#129120;</span></button>
+                <button type="button" id="nextQuesButton" onclick="nextQues()"><span style='font-size:18px;'>&#129122;</span></button>
+                <button type="button" id="flagQuesButton" onclick="flagQues()"><span style='font-size:18px;'>&#9872;</span></button>    
+            </div>
+            <button type="button" id="submitQuesButton" onclick="submitQues()">Submit</button>
         </div>
     </div>
 </div>
-<button type="button" id="submitButton" onclick="submitAnswers()">Submit</button>
+
 {% endblock %}
 
 {% block scripts %}
@@ -172,7 +217,8 @@
         let currentQuestionIndex = 0;
         let questions = [];
         let selectedOptions = [];
-
+        let remainingTime;
+        let submittedOptions = new Array(numQuestions).fill(null);
         // Fetch questions 
         fetchQuestions();
 
@@ -184,6 +230,18 @@
                 },
                 {
                     question: 'Q2. Lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum',
+                    options: ['A. Option 1', 'B. Option 2', 'C. Option 3', 'D. Option 4']
+                },
+                {
+                    question: 'Q3. Lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum',
+                    options: ['A. Option 1', 'B. Option 2', 'C. Option 3', 'D. Option 4']
+                },
+                {
+                    question: 'Q4. Lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum',
+                    options: ['A. Option 1', 'B. Option 2', 'C. Option 3', 'D. Option 4']
+                },
+                {
+                    question: 'Q5. Lorem ipsum lorem ipsum lorem ipsum lorem lorem ipsum lorem ipsum',
                     options: ['A. Option 1', 'B. Option 2', 'C. Option 3', 'D. Option 4']
                 },
                 // Add more questions here
@@ -213,11 +271,13 @@
         function renderQuestion(index) {
             const questionText = document.getElementById('question-text');
             const optionsContainer = document.getElementById('options');
-
+        
             const question = questions[index];
             questionText.textContent = question.question;
-
+        
             optionsContainer.innerHTML = '';
+            optionsContainer.setAttribute('data-question', index); // Set the data-question attribute
+        
             for (let i = 0; i < question.options.length; i++) {
                 const option = document.createElement('div');
                 option.classList.add('option');
@@ -226,18 +286,26 @@
                     selectOption(index, i);
                 });
                 optionsContainer.appendChild(option);
+        
+                // Highlight the submitted option if it exists
+                if (submittedOptions[index] !== null && submittedOptions[index] === i) {
+                    option.classList.add('submitted');
+                }
             }
-
+        
             updateQuestionBoxStyles();
         }
 
         function selectOption(questionIndex, optionIndex) {
-            const options = document.querySelectorAll('#options .option');
+            const options = document.querySelectorAll(`#options[data-question="${questionIndex}"] .option`);
             options.forEach((option, index) => {
                 option.classList.remove('selected');
                 if (index === optionIndex) {
                     option.classList.add('selected');
-                    selectedOptions[questionIndex] = optionIndex;
+                    if (submittedOptions[questionIndex] !== null && submittedOptions[questionIndex] !== index) {
+                        const submittedOption = options[submittedOptions[questionIndex]];
+                        submittedOption.classList.remove('submitted');
+                    }
                 }
             });
         }
@@ -252,6 +320,63 @@
             });
         }
 
+        function nextQues() {
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion(currentQuestionIndex);
+                updateQuestionBoxStyles();
+            }
+        }
+        
+        function prevQues() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion(currentQuestionIndex);
+                updateQuestionBoxStyles();
+            }
+        }
+        
+        function flagQues() {
+            const questionBoxes = document.querySelectorAll('#questions-panel .question-box');
+            questionBoxes[currentQuestionIndex].classList.toggle('flagged');
+        }
+        
+        let submittedQuestions = new Array(questions.length).fill(false);
+        
+        function submitQues() {
+            const selectedOption = document.querySelector('#options .option.selected');
+            if (selectedOption) {
+                const optionIndex = Array.from(selectedOption.parentNode.children).indexOf(selectedOption);
+                submittedOptions[currentQuestionIndex] = optionIndex;
+                highlightSubmittedOption(currentQuestionIndex, optionIndex);
+                highlightSubmittedQuestion(currentQuestionIndex);
+                nextQues();
+            } else {
+                submittedOptions[currentQuestionIndex] = null; // No option selected
+            }
+
+            console.log('Submitted options:', submittedOptions);
+        }
+
+        function highlightSubmittedOption(questionIndex, optionIndex) {
+            const options = document.querySelectorAll(`#options[data-question="${questionIndex}"] .option`);
+            options.forEach((option, index) => {
+                option.classList.remove('submitted');
+                if (index === optionIndex) {
+                    option.classList.add('submitted');
+                }
+            });
+        }
+        
+        function highlightSubmittedQuestion(questionIndex) {
+            const questionBoxes = document.querySelectorAll('#questions-panel .question-box');
+            questionBoxes.forEach((box, index) => {
+                if (index === questionIndex) {
+                    box.classList.add('submitted');
+                }
+            });
+        }
+
         function submitAnswers() {
             // Disable all options
             const options = document.querySelectorAll('#options .option');
@@ -261,7 +386,7 @@
             const submitButton = document.getElementById('submitButton');
             submitButton.disabled = true;
 
-            // Redirect to the result page with the selected options
+            
             const subject = '{{ subject }}';
             const grade = '{{ grade }}';
             const questionType = '{{ question_type }}';
@@ -272,43 +397,62 @@
             window.location.href = resultPageUrl;
         }
 
-        startTimer(testDurationMinutes);
-
+        startTimer(testDurationMinutes*60);
+       
         function startTimer(duration) {
-            let timer = duration * 60;
+            remainingTime = duration; // Initialize remainingTime with the test duration
             const timerElement = document.getElementById('timer');
-
-            const timerInterval = setInterval(function() {
-                const minutes = Math.floor(timer / 60);
-                let seconds = timer % 60;
+    
+            timerInterval = setInterval(function() {
+                const minutes = Math.floor(remainingTime / 60);
+                let seconds = remainingTime % 60;
                 seconds = seconds < 10 ? '0' + seconds : seconds;
-
+    
                 timerElement.textContent = `${minutes}:${seconds}`;
-
-                if (--timer < 0) {
+    
+                if (--remainingTime < 0) {
                     clearInterval(timerInterval);
                     timerElement.textContent = 'Time is up!';
                     // Redirect to the result page
                     redirectToResultPage();
                 }
             }, 1000);
-
         }
 
-        let isPaused = false;
+         
 
-        function pauseTimer(){
-            isPaused = !isPaused;
-            if (isPaused) {
-                clearInterval(timerInterval);
-                pauseButton.textContent = 'Resume';
-            } else {
-                startTimer(timer / 60);
-                pauseButton.textContent = 'Pause';
-            }
+        function pauseTimer() {
+            clearInterval(timerInterval); // Stop the timer
+            const pauseButton = document.getElementById('pauseButton');
+            const resumeButton = document.getElementById('resumeButton');
+            pauseButton.style.display = 'none'; // Hide the pause button
+            resumeButton.style.display = 'inline-block'; // Show the resume button
+            isPaused = true;
         }
-        
 
+        function resumeTimer() {
+            const timerElement = document.getElementById('timer');
+    
+            timerInterval = setInterval(function() {
+                const minutes = Math.floor(remainingTime / 60);
+                let seconds = remainingTime % 60;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+    
+                timerElement.textContent = `${minutes}:${seconds}`;
+    
+                if (--remainingTime < 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = 'Time is up!';
+                    redirectToResultPage();
+                }
+            }, 1000);
+
+            const pauseButton = document.getElementById('pauseButton');
+            const resumeButton = document.getElementById('resumeButton');
+            pauseButton.style.display = 'inline-block'; // Show the pause button
+            resumeButton.style.display = 'none'; // Hide the resume button
+            isPaused = false;
+        }
 
     }
 </script>
