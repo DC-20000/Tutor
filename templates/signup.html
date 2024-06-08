@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Sign Up</h1>
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <form method="post" action="{{ url_for('signup') }}">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-field" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-field" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign Up</button>
+    </form>
+    <div class="google-sign-in">
+        <button id="google-sign-in-btn" class="login-with-google-btn" >Sign in with Google</button>
+    </div>
+</div>
+{% endblock %}

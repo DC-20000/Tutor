@@ -219,6 +219,7 @@
         let selectedOptions = [];
         let remainingTime;
         let submittedOptions = new Array(numQuestions).fill(null);
+        
         // Fetch questions 
         fetchQuestions();
 
@@ -276,7 +277,7 @@
             questionText.textContent = question.question;
         
             optionsContainer.innerHTML = '';
-            optionsContainer.setAttribute('data-question', index); // Set the data-question attribute
+            optionsContainer.setAttribute('data-question', index); 
         
             for (let i = 0; i < question.options.length; i++) {
                 const option = document.createElement('div');
@@ -287,7 +288,6 @@
                 });
                 optionsContainer.appendChild(option);
         
-                // Highlight the submitted option if it exists
                 if (submittedOptions[index] !== null && submittedOptions[index] === i) {
                     option.classList.add('submitted');
                 }
@@ -352,7 +352,7 @@
                 highlightSubmittedQuestion(currentQuestionIndex);
                 nextQues();
             } else {
-                submittedOptions[currentQuestionIndex] = null; // No option selected
+                submittedOptions[currentQuestionIndex] = null; 
             }
 
             console.log('Submitted options:', submittedOptions);
@@ -378,11 +378,9 @@
         }
 
         function submitAnswers() {
-            // Disable all options
             const options = document.querySelectorAll('#options .option');
             options.forEach(option => option.removeEventListener('click', selectOption));
 
-            // Disable submit button
             const submitButton = document.getElementById('submitButton');
             submitButton.disabled = true;
 
@@ -400,7 +398,7 @@
         startTimer(testDurationMinutes*60);
        
         function startTimer(duration) {
-            remainingTime = duration; // Initialize remainingTime with the test duration
+            remainingTime = duration; 
             const timerElement = document.getElementById('timer');
     
             timerInterval = setInterval(function() {
@@ -413,7 +411,6 @@
                 if (--remainingTime < 0) {
                     clearInterval(timerInterval);
                     timerElement.textContent = 'Time is up!';
-                    // Redirect to the result page
                     redirectToResultPage();
                 }
             }, 1000);
@@ -422,11 +419,11 @@
          
 
         function pauseTimer() {
-            clearInterval(timerInterval); // Stop the timer
+            clearInterval(timerInterval); 
             const pauseButton = document.getElementById('pauseButton');
             const resumeButton = document.getElementById('resumeButton');
-            pauseButton.style.display = 'none'; // Hide the pause button
-            resumeButton.style.display = 'inline-block'; // Show the resume button
+            pauseButton.style.display = 'none'; 
+            resumeButton.style.display = 'inline-block'; 
             isPaused = true;
         }
 
@@ -449,8 +446,8 @@
 
             const pauseButton = document.getElementById('pauseButton');
             const resumeButton = document.getElementById('resumeButton');
-            pauseButton.style.display = 'inline-block'; // Show the pause button
-            resumeButton.style.display = 'none'; // Hide the resume button
+            pauseButton.style.display = 'inline-block'; 
+            resumeButton.style.display = 'none'; 
             isPaused = false;
         }
 
